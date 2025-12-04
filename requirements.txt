@@ -5,3 +5,4 @@ joblib
 jupyter
 transformers
 torch
+PyYAML

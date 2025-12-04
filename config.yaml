@@ -1,0 +1,31 @@
+# Project configuration (example)
+project:
+  name: NLP Hate Speech Detection
+  authors:
+    - Your Name
+  university: Your University
+
+paths:
+  data_raw: data/raw
+  data_processed: data/processed
+  processing_scripts: data/processing_scripts
+  experiments: experiments
+  models: models
+  artifacts: artifacts
+
+preprocessing:
+  text_col: text
+  label_col: label
+  lowercase: true
+  remove_urls: true
+  remove_mentions: true
+
+training:
+  seed: 42
+  train_val_test: [0.8, 0.1, 0.1]
+  default_model: logistic_regression
+  random_state: 42
+
+logging:
+  level: INFO
+  out_dir: logs
