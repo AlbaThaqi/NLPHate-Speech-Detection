@@ -6,3 +6,7 @@ Innovation: This project introduces domain-specific enhancements to existing NLP
 
 
 Dorëzimi i projektit: 14.12.2025, 23:59:59.
+
+
+https://www.kaggle.com/datasets/waalbannyantudre/hate-speech-detection-curated-dataset   a kish bo qeky si datset?
+
