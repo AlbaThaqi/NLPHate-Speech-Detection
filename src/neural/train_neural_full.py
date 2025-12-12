@@ -4,6 +4,7 @@ Run with: python -m src.neural.train_neural_full
 """
 
 # python -c "from src.neural.train_neural_full import main; main(sample_size=50)"
+#  python -c "from src.neural.train_neural_full import main; main(data_path='data/dataset.json', sample_size=50, vocab_size=2000, max_length=128, epochs=2, batch_size=8, train_transformer=False)"
 import logging
 from pathlib import Path
 from typing import Optional
@@ -58,6 +59,7 @@ def main(
     # Split a small validation from train for quick eval
     from sklearn.model_selection import train_test_split
     X_train_enc_small, X_val_enc, y_train_small, y_val = train_test_split(X_train_enc, y_train, test_size=0.1, random_state=42)
+    results = {}
 
     # Train LSTM
     try:
@@ -69,8 +71,10 @@ def main(
             torch.save(model_lstm.state_dict(), OUTPUT_DIR / "lstm.pt")
         except Exception:
             logger.info("torch not available to save LSTM model weights; install torch to save/load models")
+        results['lstm'] = res_lstm
     except Exception as e:
         logger.error(f"LSTM training failed: {e}")
+        results['lstm'] = None
 
     # Train CNN
     try:
@@ -81,8 +85,10 @@ def main(
             torch.save(model_cnn.state_dict(), OUTPUT_DIR / "cnn.pt")
         except Exception:
             logger.info("torch not available to save CNN model weights; install torch to save/load models")
+        results['cnn'] = res_cnn
     except Exception as e:
         logger.error(f"CNN training failed: {e}")
+        results['cnn'] = None
 
     # Optional Transformer
     if train_transformer:
@@ -98,8 +104,30 @@ def main(
             acc = accuracy_score(y_test, preds)
             f1 = f1_score(y_test, preds, average='macro')
             logger.info(f"Transformer Test -> acc: {acc:.4f}, f1: {f1:.4f}")
+            results['transformer'] = {'accuracy': float(acc), 'f1': float(f1)}
         except Exception as e:
             logger.error(f"Transformer training failed: {e}")
+            results['transformer'] = None
+
+    # Write a results summary file so `analysis/neural/` is populated
+    try:
+        ANALYSIS_DIR.mkdir(parents=True, exist_ok=True)
+        summary_path = ANALYSIS_DIR / "results_summary.txt"
+        with open(summary_path, 'w', encoding='utf-8') as fh:
+            fh.write("Neural NLP Training Results\n")
+            fh.write("="*40 + "\n")
+            for name in ['lstm', 'cnn', 'transformer']:
+                r = results.get(name)
+                if r is None:
+                    fh.write(f"{name.upper()}: FAILED or not run\n")
+                else:
+                    acc = r.get('accuracy', 'N/A')
+                    f1 = r.get('f1', 'N/A')
+                    fh.write(f"{name.upper()}: Accuracy={acc}, F1={f1}\n")
+            fh.write("\nModels saved to: %s\n" % str(OUTPUT_DIR))
+        logger.info(f"Results summary saved to {summary_path}")
+    except Exception as e:
+        logger.error(f"Failed to write results summary: {e}")
 
     logger.info("Neural training done. Check models/ and analysis/")
 
