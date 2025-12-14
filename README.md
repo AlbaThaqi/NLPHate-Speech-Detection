@@ -359,3 +359,6 @@ Modelet neurale ofrojnë performancë më të lartë dhe modelim më të avancua
 
 <img width="738" height="490" alt="image" src="https://github.com/user-attachments/assets/2d56da43-a8b4-4e00-b195-78e5b60855d8" />
 
+Rezultatet gjatë eksperimenteve tregojnë evoluimin e performancës së modeleve LSTM dhe CNN përgjatë epokave të trajnimit, duke përdorur metrikat Accuracy dhe Macro F1-score. Nga grafiqet Per-Epoch Performance vërehet se të dy modelet arrijnë konvergjencë relativisht të qëndrueshme, megjithatë CNN shfaq performancë pak më të lartë dhe më stabile në krahasim me LSTM, sidomos në Macro F1-score. LSTM ka luhatje më të theksuara përgjatë epokave, çka reflekton ndjeshmëri më të madhe ndaj ndryshimeve gjatë trajnimit.
+
+Në krahasimin final të modeleve, CNN arrin Accuracy ≈ 0.705 dhe Macro F1 ≈ 0.697, ndërsa LSTM arrin Accuracy ≈ 0.691 dhe Macro F1 ≈ 0.682. Këto rezultate tregojnë se CNN ka avantazh të lehtë në këtë konfigurim eksperimental, veçanërisht për kapjen e pattern-eve lokale të gjuhës së urrejtjes. Megjithatë, të dy modelet demonstrojnë aftësi të krahasueshme për detektimin e gjuhës së urrejtjes, duke mbështetur përdorimin e qasjeve neurale si alternativa efektive ndaj metodave tradicionale NLP.
