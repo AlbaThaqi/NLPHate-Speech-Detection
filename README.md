@@ -23,28 +23,16 @@
   
 - Rukije Morina
 
+
 ## Dokumentim Teknik i Projektit
 Ky projekt ka për qëllim detektimin dhe interpretimin e gjuhës së urrejtjes (Hate Speech) duke përdorur dy qasje kryesore të NLP-së:
 
-**Qasje tradicionale NLP** - bazohet në përfaqësimin e tekstit përmes veçorive statistikore dhe përdorimin e algoritmeve klasike të Machine Learning për klasifikim.
+## Tabela e Përmbajtjes kryesore te dokumentimit
 
-Algoritmet 
+- I. Qasja Tradicionale e NLP-së (Traditional NLP Pipeline)
+- II. Qasja neurale për klasifikim tre-klasor
+- III. Qasja alternative neurale (Klasifikim baze binar)
 
-**TF-IDF** - është një metodë për përfaqësimin numerik të tekstit, e cila mat rëndësinë e një fjale në një dokument në raport me të gjithë koleksionin e dokumenteve.
-
-**Algoritme klasike të Machine Learning** - Pas përfaqësimit të tekstit me TF-IDF, përdoren algoritme klasike të Machine Learning për klasifikimin e të dhënave.
-Logistic Regression është një model linear që përdoret gjerësisht për klasifikim multiclass në NLP dhe Support Vector Machine ku është një algoritëm i fuqishëm për klasifikim që funksionon shumë mirë me data tekstuale të përfaqësuara me TF-IDF.
-
-**Qasje neurale NLP** - Qasja neurale NLP bazohet në modele të rrjeteve nervore artificiale, të cilat mësojnë përfaqësime të thella të tekstit dhe kapin marrëdhënie kontekstuale midis fjalëve.
-
-Algoritmet:
-
-**Embedding** -Word embeddings janë përfaqësime dense dhe vektoriale të fjalëve, ku fjalët me kuptim të ngjashëm kanë vektorë të afërt në hapësirën vektoriale.
-**CNN Model** - CNN përdoret si model alternativ neural për klasifikimin e tekstit. Ai aplikon filtra konvolucionalë mbi embeddings për të kapur pattern-e lokale (n-grams) që janë karakteristike për gjuhën e urrejtjes.CNN është veçanërisht efektiv për tekste të shkurtra dhe ofron trajnim më të shpejtë krahasuar me LSTM, por ka kufizime në kapjen e varësive kontekstuale afatgjata.
-**Model LSTM** (Long Short-Term Memory)-LSTM është një variant i rrjeteve neurale rekurrente (RNN), i dizajnuar për të kapur varësi afatgjata në sekuenca.
-
-
-Në këtë projekt, CNN përdoret për krahasim të drejtpërdrejtë me LSTM në aspektin e performancës dhe generalization.
 
  ## Struktura e projektit 
  data/ train.json / dev.json/ test.json
