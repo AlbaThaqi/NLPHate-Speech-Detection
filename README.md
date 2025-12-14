@@ -223,6 +223,16 @@ Këto karakteristika e bëjnë HateXplain një dataset **sfidues**, veçanërish
 
 Për të përmbushur kërkesat e projektit dhe për të krijuar një bazë krahasimi me modelet neurale, u implementua një **pipeline i plotë tradicional NLP** për detektimin e gjuhës së urrejtjes. Kjo qasje përfaqëson metodologjinë klasike të përpunimit të tekstit, ku teksti transformohet në veçori numerike dhe më pas klasifikohet duke përdorur algoritme statistikore.
 
+#### Pjesa e kodit
+```text
+.
+├── src
+    │   └── traditional_techniques
+    │       ├── load_data.py
+    │       ├── preprocess.py
+    │       └── train_classical.py
+```
+
 Qasja tradicionale u përdor për të:
 - Vendosur një **baseline të fortë**
 - Analizuar kufizimet e metodave jo-neurale
@@ -416,6 +426,16 @@ Kjo motivoi kalimin në qasje neurale, e cila përmirësoi performancën dhe kap
 Përveç pipeline-it tradicional të NLP-së, ky projekt implementon edhe një qasje të bazuar në rrjete nervore për zbulimin e gjuhës së urrejtjes. Qëllimi i këtij komponenti është të modelojë informacionet sekuenciale dhe kontekstuale në tekst, të cilat nuk mund të kapen në mënyrë efektive nga qasja tradicionale e cila përdor reprezentimet si bag-of-words ose n-gram.
 
 Qasja nervore është implementuar duke përdorur PyTorch dhe përdor të njëjtin dataset (HateXplain) në një me klasifikim tre-klasor (normal, ofendues, gjuhë urrejtjeje).
+
+#### Pjesa e kodit
+```text
+.
+├── src
+    │   └── three_class_lstm
+    │       ├── ...
+    │       .
+    │       ....
+```
 
 **Përmbledhje e Modelit**
 
