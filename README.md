@@ -107,8 +107,11 @@ Development set (dev) – përdoret për validim dhe rregullim parametrash (kur 
 
 Test set – përdoret vetëm për vlerësimin final të performancës
 
-### Libraritë e përdorura në kod 
+### Gjuhët programuese dhe libraritë e përdorura në kod 
+I gjithë projekti është implementuar në gjuhën Python, duke përdorur librari të njohura për NLP, Machine Learning dhe Deep Learning.
+Rezultatet e vlerësimit të modeleve ruhen në skedarë HTML, të cilët përmbajnë raporte të detajuara të metrikeve dhe vizualizime të performancës.
 
+Libraritë e përdorura
 pandas -	menaxhim i dataset-it (ngarkim JSON, manipulime)
 
 numpy	- operacione numerike
