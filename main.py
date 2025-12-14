@@ -1,5 +1,5 @@
-from src.hatexplain.load_data import load_hatexplain
-from src.hatexplain.preprocess import TextPreprocessor
+from src.traditional_techniques.load_data import load_hatexplain
+from src.traditional_techniques.preprocess import TextPreprocessor
 
 df = load_hatexplain("data/dataset.json")
 
