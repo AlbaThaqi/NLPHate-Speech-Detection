@@ -77,6 +77,14 @@ Arsyet:
 
 Ky lloj dataseti lejon **detektim+interpretim** dhe jo vetëm klasifikim
 
+**Dataset-i përmban tri klasa kryesore:**
+
+1. Hate – përmbajtje që përmban gjuhë urrejtjeje
+
+2. Offensive – gjuhë ofenduese, por jo domosdoshmërisht urrejtje
+
+3. Normal – përmbajtje neutrale
+
 ### Përmbajtja e dataset-it
 Dataset-i është në format JSON dhe përmban kolonat:
 
@@ -94,21 +102,27 @@ Dataset-i është në format JSON dhe përmban kolonat:
 
 Dataset-i përmban rreth 40,000 shembuj.
 
-**Dataset-i përmban tri klasa kryesore:**
+### Përshkrimi i Dataset-it
 
-1. Hate – përmbajtje që përmban gjuhë urrejtjeje
+Pipeline-i tradicional u trajnua dhe u testua mbi dataset-in **HateXplain**, i cili përmban postime nga rrjetet sociale (kryesisht Twitter).
 
-2. Offensive – gjuhë ofenduese, por jo domosdoshmërisht urrejtje
+Karakteristikat kryesore të dataset-it:
+- 3 klasa:
+  - `normal`
+  - `offensive`
+  - `hateful`
+- Rreth **16,000 mostra trajnimi**
+- Rreth **4,000 mostra testimi/validimi**
+- Çdo instancë ka **disa anotues njerëzorë**
+- Etiketa finale përcaktohet me **majority voting**
 
-3. Normal – përmbajtje neutrale
+### Sfida kryesore të dataset-it
+- Subjektivitet i lartë i anotimit
+- Mbivendosje semantike midis *offensive* dhe *hateful*
+- Balancë jo e barabartë e klasave
 
-**HateXplain ofrohet i ndarë paraprakisht në:**
+Këto karakteristika e bëjnë HateXplain një dataset **sfidues**, veçanërisht për metodat tradicionale.
 
-- Train set – përdoret për trajnim të modeleve
-
-- Development set (dev) – përdoret për validim dhe rregullim parametrash (kur aplikohet)
-
-- Test set – përdoret vetëm për vlerësimin final të performancës
 
 ### Gjuhët programuese dhe libraritë e përdorura në kod 
 I gjithë projekti është implementuar në gjuhën Python, duke përdorur librari të njohura për NLP, Machine Learning dhe Deep Learning.
@@ -133,89 +147,6 @@ Libraritë e përdorura
 8. re -	manipulim string-esh gjatë preprocessing
 
 
-### Preprocessing i të dhënave
-Qëllimi është pastrimi dhe normalizimi i tekstit.
-
-Dataset-i HateXplain është në format JSON, ku secili rekord përmban token-at e postimit dhe anotimet.
-
-Dataset-i HateXplain është i ndarë paraprakisht në train, development dhe test set.
-
-1. Train set përdoret për trajnimin e modeleve
-
-2. Dev set për rregullim të parametrave (opsional)
-
-3. Test set përdoret vetëm për vlerësimin final
-
-Në kod përdoret vetëm: post_tokens dhe label final
-
-Rationales ruhen për analizë interpretimi, por nuk përdoren direkt për trajnim.
-
-**Hapat që merren** teksti vjen i ndarë në token-a, prandaj hapi i parë është:
-bashkimi i token-ave në një string të vetëm
-Në kod kemi <img width="321" height="17" alt="image" src="https://github.com/user-attachments/assets/379cdf33-93fb-4323-a20e-bc27b4952b24" />
-
-Roli i kësaj është që të bëhet tokenizer-i i LSTM-së të funksionojnë korrekt.
-
-Në të njëjtin file (text_preprocessing.py) bëhen normalizimi që të mund të shmang dallimin midis psh: Hate dhe hate dhe njëkohësisht redukton dimensionin e veçorive
-
-<img width="230" height="27" alt="image" src="https://github.com/user-attachments/assets/0d3c054f-b2f1-4e64-8b42-fa42f0187f44" />
-
-
-Heqja e URL-ve dhe mentions -  URL-t dhe usernames nuk kontribuojnë në semantikën e urrejtjes por vetëm zvogëlojnë zhurmën në të dhëna
-
-<img width="317" height="68" alt="image" src="https://github.com/user-attachments/assets/f2cb86a6-5b57-4cd4-b867-00b42be3e329" />
-
-Heqja e karaktereve speciale - modelet tradicionale nuk përfitojnë nga simbole ruhet vetëm teksti semantik
-
-<img width="337" height="38" alt="image" src="https://github.com/user-attachments/assets/a03472ab-6919-471f-9054-a284ca923f18" />
-
-
-**Heqja e stopwords**
-Përdoret lista standarde e NLTK stopwords ku fjalët si the, is, and nuk ndihmojnë në klasifikim
-redukton dimensionin e vektorëve TF-IDF**
-
-<img width="272" height="32" alt="image" src="https://github.com/user-attachments/assets/9d79fcf1-b9e5-4bc3-918b-26e8f3dbd396" />
-
-(Opsionale) Stemming / Lemmatization i cili bashkon forma të ndryshme të së njëjtës fjalë përmirëson përgjithësimin e modelit
-
-<img width="183" height="27" alt="image" src="https://github.com/user-attachments/assets/bc280867-11d2-47e4-a7ea-200fb9e10591" />
-
-Pas preprocessing-ut, secili postim përfaqësohet si një string i pastruar dhe i normalizuar, i gatshëm për TF-IDF vectorization ose tokenization për LSTM.
-
-Output i preprocessing-ut  kalon në dy pipeline të ndryshme: tradicional dhe neutral
-
-I njëjti preprocessing përdoret si për qasjen tradicionale ashtu edhe për atë neurale, për të siguruar një krahasim të drejtë dhe të paanshëm mes modeleve.
-
-Etiketat origjinale të dataset-it (Hate, Offensive, Normal) u mapuan në vlera numerike për t’u përdorur nga modelet e Machine Learning:
-
-Hate → 0
-
-Offensive → 1
-
-Normal → 2
-
-Nuk është aplikuar data augmentation apo balancing artificial i klasave, në mënyrë që modelet të vlerësohen mbi shpërndarjen reale të dataset-it.
-
-### Përshkrimi i Dataset-it
-
-Pipeline-i tradicional u trajnua dhe u testua mbi dataset-in **HateXplain**, i cili përmban postime nga rrjetet sociale (kryesisht Twitter).
-
-Karakteristikat kryesore të dataset-it:
-- 3 klasa:
-  - `normal`
-  - `offensive`
-  - `hateful`
-- Rreth **16,000 mostra trajnimi**
-- Rreth **4,000 mostra testimi/validimi**
-- Çdo instancë ka **disa anotues njerëzorë**
-- Etiketa finale përcaktohet me **majority voting**
-
-### Sfida kryesore të dataset-it
-- Subjektivitet i lartë i anotimit
-- Mbivendosje semantike midis *offensive* dhe *hateful*
-- Balancë jo e barabartë e klasave
-
-Këto karakteristika e bëjnë HateXplain një dataset **sfidues**, veçanërisht për metodat tradicionale.
 
 ---
 
@@ -651,81 +582,143 @@ Modeli neural përfundimtar është një LSTM dypalësh me vëmendje dhe embeddi
 Këto të gjetura motivojnë eksplorimin e ardhshëm të modeleve bazuar në transformer.
 
 
-## Pipeline Neurale NLP
-Qasja neurale NLP në këtë projekt përdor rrjete nervore artificiale për të mësuar përfaqësime të thella të tekstit dhe për të kapur kontekstin dhe rendin e fjalëve, çka është thelbësore për detektimin e gjuhës së urrejtjes në tekste reale.
 
-Pipeline neurale përbëhet nga këto hapa:
+## III. Qasja alternative neurale (Klasifikim baze binar)
 
-Tokenization dhe Padding
+### Formulimi i problemit: Binary Classification
 
-Word Embeddings
+Ndryshe prej modelit të paraqitur në II, i cili performon **three-class classification** (`normal`, `offensive`, `hateful`), ky implementim alternativ e riformulon problemin si **binary classification**, për të parë dallimet në performancë.
 
-Modeli LSTM
+### Mapimi i etiketave
 
-Trajnimi dhe parashikimi
+| Original Label | Binary Label |
+|---------------|-------------|
+| normal | 0 (non-hateful) |
+| none | 0 (non-hateful) |
+| offensive | 1 (hateful/toxic) |
+| hatespeech | 1 (hateful/toxic) |
 
+Mapimi implementohet direkt në kodin për ngarkim të të dhënave
 
-#### Tokenization
-Shndërrimi i tekstit të pastruar në sekuenca numerike që mund të përpunohen nga një model neural.
-Përdoret Tokenizer nga Keras
+```python
+y = 0 if example["label"] in ("normal", "none") else 1
+```
 
-Çdo fjalë mapohet në një ID numerik
+Si rezultat modeli mëson të dallojë përmbajtjet **toxic vs non-toxic**
+---
 
-Ruhet rendi i fjalëve në tekst
+### Arkitektura e implementuar
 
-Sekuencat me gjatësi të ndryshme unifikohen përmes padding
+Ky implementim alternativ vlereson disa arkitektura neurale duke shfrytëzuar të njëjtin piepline të trajnimit dhe vlerësimit
+- LSTM-based classifier  
+- CNN-based classifier  
+- Transformer-based classifier
 
-<img width="318" height="73" alt="image" src="https://github.com/user-attachments/assets/1d5ff1cb-1dbb-4762-a50d-fcb582a85f70" />
+Të gjithë modelet implementohen përmes PyTorch
 
-Ndryshe nga TF-IDF, këtu rendi ka rëndësi.
+---
 
-#### Padding
-Të sigurohet që të gjitha input-et kanë gjatësi fikse për modelin LSTM.
-Padding aplikohet pas tokenization për të garantuar input uniform për modelin LSTM.
+### Arkitektura LSTM
 
-pad_sequences(sequences, maxlen=MAX_LEN)
+Ky model LSTM dallon nga ai i prezantuar në pjesën II.
 
-<img width="400" height="43" alt="image" src="https://github.com/user-attachments/assets/e4934dd7-f9a3-43f4-ba2b-4e72c7912947" />
+#### Architecture Details
 
+- Bidirectional LSTM
+- Max pooling over time
+- Randomly initialized embeddings
+- Binary output layer
 
-#### Embedding Layer
+```python
+self.lstm = nn.LSTM(
+    input_size=embed_dim,
+    hidden_size=hidden_dim,
+    bidirectional=True,
+    batch_first=True
+)
 
-Shndërrimi i fjalëve nga ID numerike në vektorë dense që ruajnë informacion semantik ku çdo fjalë përfaqësohet si vektor numerik dhe embeddings mësohen gjatë trajnimit
-Dimensioni i embedding-ut është fiksuar për të balancuar kompleksitetin dhe performancën.
+self.fc = nn.Linear(hidden_dim * 2, 2)
+```
 
-<img width="378" height="36" alt="image" src="https://github.com/user-attachments/assets/d92da70a-7e90-44d8-b4fb-deb5548325f1" />
+#### Dallimet kryesore nga PII
 
-#### LSTM Layer
-Kapja e varësive kontekstuale në tekst, lexon tekstin fjalë pas fjale dhe ruan informacion afatshkurtër dhe afatgjatë
-LSTM(units=64)
+| Aspect | Part II LSTM | Part III LSTM |
+|------|------------|---------------|
+| Task | 3-class | Binary |
+| Embeddings | GloVe (pretrained) | Random |
+| Attention | Yes | No |
+| Pooling | Attention | Max pooling |
+| Output Classes | 3 | 2 |
 
-<img width="201" height="33" alt="image" src="https://github.com/user-attachments/assets/e54d58b7-8e14-42c7-9c5a-da0c9f6ebe88" />
+---
 
-#### Dense + Softmax
-Gjenerimi i parashikimit final të klasës.
-probabilitet për secilën klasë:
-Hate
+### Arkitektura CNN
 
-Offensive
+Modeli baze CNN perdor konvolucioned 1D per te kapur paternat lokale n-grame:
 
-Normal
+```python
+self.conv = nn.Conv1d(
+    in_channels=embed_dim,
+    out_channels=128,
+    kernel_size=3
+)
+```
 
-zgjidhet klasa me probabilitetin më të lartë
-<img width="306" height="37" alt="image" src="https://github.com/user-attachments/assets/39fd90a5-693c-4f4e-a7c2-c9a6ae88a576" />
+CNN fokusohet ne paternat leksikore dhe sinjalet e toksicitetit te bazuara ne fjale kyce.
 
-### Vlerësimi i Modeleve (Tradicional & Neural)
+---
 
-Metrikat e përdorura
+### Konfigurimi i trajnimit
 
-Accuracy – saktësia e përgjithshme
+- Optimizer: Adam  
+- Loss: CrossEntropyLoss  
+- Batch size: 32  
+- Learning rate: 1e-3  
+- Epochs: up to 8  
+- Metric: Macro F1  
 
-Precision – sa parashikime pozitive janë të sakta
+---
 
-Recall – sa raste reale janë kapur
+### Rezultatet e eksperimentimit
 
-F1-score – balancë mes precision dhe recall
+#### LSTM Results (Binary)
 
-<img width="375" height="32" alt="image" src="https://github.com/user-attachments/assets/6a9d3ffd-c219-4bfc-839a-23b68c9e49d2" />
+Performanca me e mire u arrit ne epokat 3–4:
+
+- Accuracy ≈ **0.73**
+- Macro F1 ≈ **0.72**
+
+Epokat tjera treguan overfitting.
+
+### CNN Results (Binary)
+
+- Accuracy ≈ **0.71**
+- Macro F1 ≈ **0.70**
+
+CNN tregoi performance me stabile edhe pse pak me te ulet se LSTM.
+
+---
+
+## Krahasimi me LSTM nga P.II
+
+| Model | Task | Macro F1 | Accuracy |
+|------|------|----------|----------|
+| Main LSTM (Part II) | 3-class | ~0.60 | ~0.61 |
+| Binary LSTM (Part III) | Binary | ~0.72 | ~0.73 |
+| Binary CNN (Part III) | Binary | ~0.70 | ~0.71 |
+
+Rezultatet me te mira ne P.III vijne pershkak te klasifikimit binar krahasuar me ate tre-klasor.
+
+---
+
+### Permbledhje 
+
+Kjo qasje alternative neurale demostron se:
+
+- BKlasifikimi binar rezulton me metrika me te mira mirepo me me pak nuance  
+- Modelet baze neurale performojne me mire se modelet tradicionale te NLP  
+- Formulimi i problemit ndikon ne performance 
+
 
 
 ### Rezultatet 
