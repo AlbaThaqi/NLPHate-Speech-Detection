@@ -1,6 +1,6 @@
 
 
-# Projekti :  Krijimi i një modeli për dedektim të gjuhës të urrejtjes (Hate-Speech)
+# Projekti : Detektimi dhe interpretimi i gjuhës së urrejtjes duke përdorur teknika tradicionale dhe neurale të NLP-së
 
 **Lënda**: Procesimi i gjuhëve natyrale - NLP
 
