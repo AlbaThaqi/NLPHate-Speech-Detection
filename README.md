@@ -33,18 +33,6 @@ Ky projekt ka për qëllim detektimin dhe interpretimin e gjuhës së urrejtjes 
 - II. Qasja neurale për klasifikim tre-klasor
 - III. Qasja alternative neurale (Klasifikim baze binar)
 
-
- ## Struktura e projektit 
- data/ train.json / dev.json/ test.json
- 
- preprocessing/text_preprocessing.py
- 
- traditional_models/tfidf_vectorizer.py/ logistic_regression.py/ svm_model.py
- 
- neural_models/ tokenizer.py/ lstm_model.py
- 
- evaluation/metrics.py
-
 ## Dataseti 
 
 Dataset-i i përdorur është HateXplain, i marrë GitHub
