@@ -23,7 +23,7 @@
   
 - Rukije Morina
 
-  ## Dokumentim Teknik i Projektit
+## Dokumentim Teknik i Projektit
 Ky projekt ka për qëllim detektimin dhe interpretimin e gjuhës së urrejtjes (Hate Speech) duke përdorur dy qasje kryesore të NLP-së:
 
 **Qasje tradicionale NLP** - bazohet në përfaqësimin e tekstit përmes veçorive statistikore dhe përdorimin e algoritmeve klasike të Machine Learning për klasifikim.
@@ -45,6 +45,7 @@ Algoritmet:
 
 
 Në këtë projekt, CNN përdoret për krahasim të drejtpërdrejtë me LSTM në aspektin e performancës dhe generalization.
+
  ## Struktura e projektit 
  data/ train.json / dev.json/ test.json
  
@@ -60,6 +61,7 @@ Në këtë projekt, CNN përdoret për krahasim të drejtpërdrejtë me LSTM në
 
 Dataset-i i përdorur është HateXplain, i marrë GitHub
 https://github.com/hate-alert/HateXplain
+
 Ky dataset është krijuar posaçërisht për:
 
 1.Hate speech detection
@@ -69,6 +71,7 @@ Ky dataset është krijuar posaçërisht për:
 3.Explainability (interpretim)
 
 ### Pse kemi zgjedhur këtë dataset HateXplain?
+
 Arsyet:
 është dataset akademik, përmban annotime nga disa anotues dhe ofron fjalë të theksuara që shpjegojnë klasifikimin
 
@@ -77,73 +80,76 @@ Ky lloj dataseti lejon **detektim+interpretim** dhe jo vetëm klasifikim
 ### Përmbajtja e dataset-it
 Dataset-i është në format JSON dhe përmban kolonat:
 
-Fusha -	Përshkrimi
+1. Fusha -	Përshkrimi
 
-post_id	- ID unike
+2. post_id	- ID unike
 
-post_tokens -	Teksti i ndarë në fjalë
+3. post_tokens -	Teksti i ndarë në fjalë
 
-annotators	- Lista e anotuesve
+4. annotators	- Lista e anotuesve
 
-label	Etiketa finale - (Hate / Offensive / Normal)
+5. label	Etiketa finale - (Hate / Offensive / Normal)
 
-rationales	- Fjalët që justifikojnë etiketën
+6. rationales	- Fjalët që justifikojnë etiketën
 
 Dataset-i përmban rreth 40,000 shembuj.
 
 **Dataset-i përmban tri klasa kryesore:**
 
-Hate – përmbajtje që përmban gjuhë urrejtjeje
+1. Hate – përmbajtje që përmban gjuhë urrejtjeje
 
-Offensive – gjuhë ofenduese, por jo domosdoshmërisht urrejtje
+2. Offensive – gjuhë ofenduese, por jo domosdoshmërisht urrejtje
 
-Normal – përmbajtje neutrale
+3. Normal – përmbajtje neutrale
 
 **HateXplain ofrohet i ndarë paraprakisht në:**
 
-Train set – përdoret për trajnim të modeleve
+- Train set – përdoret për trajnim të modeleve
 
-Development set (dev) – përdoret për validim dhe rregullim parametrash (kur aplikohet)
+- Development set (dev) – përdoret për validim dhe rregullim parametrash (kur aplikohet)
 
-Test set – përdoret vetëm për vlerësimin final të performancës
+- Test set – përdoret vetëm për vlerësimin final të performancës
 
 ### Gjuhët programuese dhe libraritë e përdorura në kod 
 I gjithë projekti është implementuar në gjuhën Python, duke përdorur librari të njohura për NLP, Machine Learning dhe Deep Learning.
 Rezultatet e vlerësimit të modeleve ruhen në skedarë HTML, të cilët përmbajnë raporte të detajuara të metrikeve dhe vizualizime të performancës.
 
 Libraritë e përdorura
-pandas -	menaxhim i dataset-it (ngarkim JSON, manipulime)
 
-numpy	- operacione numerike
+1. pandas -	menaxhim i dataset-it (ngarkim JSON, manipulime)
 
-scikit-learn	- TF-IDF vectorization, Logistic Regression, SVM, metrikat e vlerësimit
+2. numpy	- operacione numerike
 
-nltk -	stopwords, pastrimi i tekstit
+3. scikit-learn	- TF-IDF vectorization, Logistic Regression, SVM, metrikat e vlerësimit
 
- torch – implementimi i modeleve neurale (CNN, LSTM), embedding dhe training
+4. nltk -	stopwords, pastrimi i tekstit
 
-matplotlib / seaborn -	vizualizime (nëse përdoren)
+5. torch – implementimi i modeleve neurale (CNN, LSTM), embedding dhe training
 
-json -	parsimi i skedarëve JSON të dataset-it HateXplain
+6. matplotlib / seaborn -	vizualizime (nëse përdoren)
 
-re -	manipulim string-esh gjatë preprocessing
+7. json -	parsimi i skedarëve JSON të dataset-it HateXplain
+
+8. re -	manipulim string-esh gjatë preprocessing
 
 
 ### Preprocessing i të dhënave
 Qëllimi është pastrimi dhe normalizimi i tekstit.
+
 Dataset-i HateXplain është në format JSON, ku secili rekord përmban token-at e postimit dhe anotimet.
 
 Dataset-i HateXplain është i ndarë paraprakisht në train, development dhe test set.
 
-Train set përdoret për trajnimin e modeleve
+1. Train set përdoret për trajnimin e modeleve
 
-Dev set për rregullim të parametrave (opsional)
+2. Dev set për rregullim të parametrave (opsional)
 
-Test set përdoret vetëm për vlerësimin final
+3. Test set përdoret vetëm për vlerësimin final
 
 Në kod përdoret vetëm: post_tokens dhe label final
 
 Rationales ruhen për analizë interpretimi, por nuk përdoren direkt për trajnim.
+
 **Hapat që merren** teksti vjen i ndarë në token-a, prandaj hapi i parë është:
 bashkimi i token-ave në një string të vetëm
 Në kod kemi <img width="321" height="17" alt="image" src="https://github.com/user-attachments/assets/379cdf33-93fb-4323-a20e-bc27b4952b24" />
@@ -164,17 +170,20 @@ Heqja e karaktereve speciale - modelet tradicionale nuk përfitojnë nga simbole
 <img width="337" height="38" alt="image" src="https://github.com/user-attachments/assets/a03472ab-6919-471f-9054-a284ca923f18" />
 
 
-Heqja e stopwords
+**Heqja e stopwords**
 Përdoret lista standarde e NLTK stopwords ku fjalët si the, is, and nuk ndihmojnë në klasifikim
 redukton dimensionin e vektorëve TF-IDF**
 
 <img width="272" height="32" alt="image" src="https://github.com/user-attachments/assets/9d79fcf1-b9e5-4bc3-918b-26e8f3dbd396" />
 
 (Opsionale) Stemming / Lemmatization i cili bashkon forma të ndryshme të së njëjtës fjalë përmirëson përgjithësimin e modelit
+
 <img width="183" height="27" alt="image" src="https://github.com/user-attachments/assets/bc280867-11d2-47e4-a7ea-200fb9e10591" />
 
 Pas preprocessing-ut, secili postim përfaqësohet si një string i pastruar dhe i normalizuar, i gatshëm për TF-IDF vectorization ose tokenization për LSTM.
+
 Output i preprocessing-ut  kalon në dy pipeline të ndryshme: tradicional dhe neutral
+
 I njëjti preprocessing përdoret si për qasjen tradicionale ashtu edhe për atë neurale, për të siguruar një krahasim të drejtë dhe të paanshëm mes modeleve.
 
 Etiketat origjinale të dataset-it (Hate, Offensive, Normal) u mapuan në vlera numerike për t’u përdorur nga modelet e Machine Learning:
@@ -283,7 +292,9 @@ Ndryshe nga TF-IDF, këtu rendi ka rëndësi.
 #### Padding
 Të sigurohet që të gjitha input-et kanë gjatësi fikse për modelin LSTM.
 Padding aplikohet pas tokenization për të garantuar input uniform për modelin LSTM.
+
 pad_sequences(sequences, maxlen=MAX_LEN)
+
 <img width="400" height="43" alt="image" src="https://github.com/user-attachments/assets/e4934dd7-f9a3-43f4-ba2b-4e72c7912947" />
 
 
@@ -291,6 +302,7 @@ pad_sequences(sequences, maxlen=MAX_LEN)
 
 Shndërrimi i fjalëve nga ID numerike në vektorë dense që ruajnë informacion semantik ku çdo fjalë përfaqësohet si vektor numerik dhe embeddings mësohen gjatë trajnimit
 Dimensioni i embedding-ut është fiksuar për të balancuar kompleksitetin dhe performancën.
+
 <img width="378" height="36" alt="image" src="https://github.com/user-attachments/assets/d92da70a-7e90-44d8-b4fb-deb5548325f1" />
 
 #### LSTM Layer
