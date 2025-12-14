@@ -196,69 +196,439 @@ Normal → 2
 
 Nuk është aplikuar data augmentation apo balancing artificial i klasave, në mënyrë që modelet të vlerësohen mbi shpërndarjen reale të dataset-it.
 
-## Pipeline Tradicional NLP
-Qasja tradicionale NLP në këtë projekt bazohet në përfaqësimin statistikor të tekstit përmes TF-IDF dhe përdorimin e algoritmeve klasike të Machine Learning për klasifikim. 
-Kjo pipeline shërben si baseline dhe ofron interpretueshmëri të lartë të rezultateve.
+### Përshkrimi i Dataset-it
 
-Pipeline tradicional përbëhet nga tre hapa kryesorë:
+Pipeline-i tradicional u trajnua dhe u testua mbi dataset-in **HateXplain**, i cili përmban postime nga rrjetet sociale (kryesisht Twitter).
 
-TF-IDF vectorization
+Karakteristikat kryesore të dataset-it:
+- 3 klasa:
+  - `normal`
+  - `offensive`
+  - `hateful`
+- Rreth **16,000 mostra trajnimi**
+- Rreth **4,000 mostra testimi/validimi**
+- Çdo instancë ka **disa anotues njerëzorë**
+- Etiketa finale përcaktohet me **majority voting**
 
-Trajnimi i modeleve klasike të ML
+### Sfida kryesore të dataset-it
+- Subjektivitet i lartë i anotimit
+- Mbivendosje semantike midis *offensive* dhe *hateful*
+- Balancë jo e barabartë e klasave
 
-Vlerësimi i performancës
+Këto karakteristika e bëjnë HateXplain një dataset **sfidues**, veçanërisht për metodat tradicionale.
+
+---
+
+### I. Qasja Tradicionale e NLP-së (Traditional NLP Pipeline)
+
+Për të përmbushur kërkesat e projektit dhe për të krijuar një bazë krahasimi me modelet neurale, u implementua një **pipeline i plotë tradicional NLP** për detektimin e gjuhës së urrejtjes. Kjo qasje përfaqëson metodologjinë klasike të përpunimit të tekstit, ku teksti transformohet në veçori numerike dhe më pas klasifikohet duke përdorur algoritme statistikore.
+
+Qasja tradicionale u përdor për të:
+- Vendosur një **baseline të fortë**
+- Analizuar kufizimet e metodave jo-neurale
+- Krahasuar performancën me modelet neurale të mëvonshme
+
+
+### Përpunimi i Tekstit (Text Preprocessing)
+
+Përpunimi i tekstit është një hap kritik në pipeline-in tradicional, pasi cilësia e veçorive varet drejtpërdrejt nga pastrimi i të dhënave.
+
+Hapat e ndjekur për përpunimin e tekstit:
+
+#### 1. Normalizimi
+- Kalimi i tekstit në shkronja të vogla
+- Heqja e URL-ve
+- Heqja e përmendjeve të përdoruesve (@username)
+- Heqja e shenjave të pikësimit
+
+#### 2. Tokenizimi
+- Ndarja e tekstit në fjalë individuale (tokens)
+
+#### 3. Heqja e Stopwords
+- Eliminimi i fjalëve shumë të shpeshta dhe pak informuese (p.sh. *the*, *is*, *and*)
+
+#### 4. Lemmatizimi
+- Reduktimi i fjalëve në formën e tyre bazë (rrënjë)
+- P.sh. *hating*, *hated* → *hate*
+
+
+Shembull:
+
+```python
+def clean_text(text):
+    text = text.lower()
+    text = re.sub(r"http\S+|www\S+", "", text)
+    text = re.sub(r"@\w+", "", text)
+    text = re.sub(r"[^a-z\s]", "", text)
+    return text
+```    
+
+Shembull i pastrimit te tekstit:
+```
+| Original Text                        | Cleaned Text        |
+| ------------------------------------ | ------------------- |
+| `@user This bitch in Whataburger!!!` | `bitch whataburger` |
+```
+
+**Arsyetimi:**
+Qëllimi ishte të:
+- Reduktohej zhurma
+- Rritej përgjithësimi i modelit
+
+---
+
+### Krijimi i Veçorive (Feature Engineering)
+
+Pas përpunimit të tekstit, fjalët u shndërruan në veçori numerike duke përdorur **TF-IDF (Term Frequency–Inverse Document Frequency)**.
 
 ### TF-IDF Vectorization
 
-Shndërrimi i tekstit të pastruar në një përfaqësim numerik të përshtatshëm për algoritmet klasike të Machine Learning.
+U përdor:
+- Unigramë (fjalë individuale)
+- Bigramë (çifte fjalësh)
 
-<img width="227" height="105" alt="image" src="https://github.com/user-attachments/assets/4f102476-fb44-4dd8-b064-56c298c00596" />
+Kjo lejon kapjen e:
+- Fjalëve individuale problematike
+- Shprehjeve të shkurtra (p.sh. *hate you*, *go back*)
 
-Teksti i pastruar merret si input nga preprocessing
+```python
+from sklearn.feature_extraction.text import TfidfVectorizer
 
-Përdoret TfidfVectorizer nga scikit-learn ku krijohet një matricë sparse ku:
-çdo rresht përfaqëson një dokument
+vectorizer = TfidfVectorizer(
+    ngram_range=(1, 2),
+    max_features=30000
+)
 
-çdo kolonë përfaqëson një fjalë ose n-gram
+X_train_tfidf = vectorizer.fit_transform(train_texts)
+X_test_tfidf = vectorizer.transform(test_texts)
 
-max_features = 5000
-Kufizon madhësinë e fjalorit për të reduktuar kompleksitetin dhe overfitting.
+```
 
-ngram_range = (1, 2)
-Përdoren unigram dhe bigram për të kapur shprehje të shkurtra karakteristike për gjuhën e urrejtjes.
+**Pse TF-IDF?**
+- Jep peshë më të lartë fjalëve diskriminuese
+- Penalizon fjalët shumë të zakonshme
+- Është standard në klasifikimin e tekstit
 
-### Ndarja Train / Test
-Trajnimi i datasetit shmang overfitting dhe lejon vlerësim real të performancës.
+Megjithatë, TF-IDF:
+- Nuk kap rendin e fjalëve përtej n-gramëve
+- Nuk kupton kontekstin semantik
+- Trajton çdo dokument si “bag-of-words”
 
-<img width="377" height="26" alt="image" src="https://github.com/user-attachments/assets/b41bbd61-36b4-4637-9079-e184b2d45681" />
+---
 
-### Logistic Regression
+## Modelet e Klasifikimit të Testuara
 
-Qëllimi
-Klasifikimi i tekstit në klasat Hate, Offensive dhe Normal duke përdorur veçoritë TF-IDF.
-TF-IDF vectors ndahen në train dhe test set
+U testuan tre algoritme klasike të mësimit makinerik:
 
-Trajnohet një model LogisticRegression
+### 1. Logistic Regression
+- Linear
+- I shpejtë
+- I interpretuar lehtë
 
-Gjenerohen parashikime për test set
+**Vëzhgim:**
+- Performancë stabile
+- Kufizime në kapjen e marrëdhënieve komplekse
 
-max_iter = 1000
-Siguron konvergjencë të modelit për data me dimension të lartë.
+---
 
-Modeli e mëson peshat e fjalëve ku çdo fjalë a ka ndikim pozitiv ose negativ në klasë
-Si output ka accuracy, precision, recall, F1
+### 2. Support Vector Machine (Linear SVM)
+- Maksimizon marginën ndarëse
+- Efektiv për tekste të dimensioneve të larta
 
-<img width="341" height="27" alt="image" src="https://github.com/user-attachments/assets/88615800-5524-4bf3-86e6-9fc554424845" />
+**Vëzhgim:**
+- Performanca më e mirë ndër modelet tradicionale
+- Megjithatë, ndjeshmëri ndaj klasave të mbivendosura
+
+---
+
+### 3. Multinomial Naive Bayes
+- Bazuar në probabilitet
+- Shumë i shpejtë
+
+**Vëzhgim:**
+- Performancë më e dobët
+- Supozimi i pavarësisë së veçorive nuk vlen për gjuhën natyrore
+
+---
+
+## Konfigurimi i Eksperimentit
+
+- Problem klasifikimi me **3 klasa**
+- Ndarje train/test standarde
+- Metrikat e përdorura:
+  - Accuracy
+  - **Macro-F1** (prioritet)
+
+**Pse Macro-F1?**
+- Dataset-i është i pabalancuar
+- Macro-F1 penalizon performancën e dobët në klasat minoritare
+- Jep pasqyrë më reale të cilësisë së modelit
+
+---
+
+## Rezultatet Eksperimentale
+
+### Performanca e Përgjithshme
+
+| Modeli | Accuracy | Macro-F1 |
+|------|----------|----------|
+| Naive Bayes | ~0.55 | ~0.52 |
+| Logistic Regression | ~0.58 | ~0.56 |
+| Linear SVM | ~0.60 | ~0.58 |
+
+**Vëzhgime kryesore:**
+- Linear SVM dha rezultatet më të mira
+- Asnjë model tradicional nuk kaloi Macro-F1 ≈ 0.60
+- Accuracy ishte metrikë mashtruese për shkak të klasës *normal*
+
+---
+
+### Analiza e Gabimeve
+
+Modelet tradicionale performuan mirë në klasën:
+- `normal`
+
+Por patën vështirësi serioze në:
+- Dallimin midis `offensive` dhe `hateful`
+
+**Shembull i gabimit tipik:**
+- ```“You people are disgusting”```
+- Fjalia përmban fjalë fyese, por pa target grupor
+- Modeli e etiketon gabimisht si *hateful*
+
+Kjo ndodh sepse:
+- TF-IDF nuk kap target-in semantik
+- Nuk kuptohet konteksti ose qëllimi i fjalës
+
+## Përfundim për Qasjen Tradicionale
+
+Qasja tradicionale e NLP-së arriti rezultate të arsyeshme, por:
+- Nuk mjafton për detektim të saktë të urrejtjes
+- Dështon në raste kontekstuale
+- Ka nevojë për modele më të thella dhe semantike
+
+Kjo motivoi kalimin në qasje neurale, e cila përmirësoi performancën dhe kapacitetin interpretues të sistemit.
 
 
-### Support Vector Machine (SVM)
 
-Ofrimi i një modeli më të fuqishëm tradicional për klasifikim tekstual, për krahasim me Logistic Regression.
-Kjo i merr të njëjtët TF-IDF vectors dhe përdor LinearSVC ku ndërton një hyperplane ndarës mes klasave
+### II. Qasja neurale për klasifikim tre-klasor
 
-<img width="157" height="22" alt="image" src="https://github.com/user-attachments/assets/529ad7e3-c6a5-4ba1-9bca-8f8c859ec23d" />
+Përveç pipeline-it tradicional të NLP-së, ky projekt implementon edhe një qasje të bazuar në rrjete nervore për zbulimin e gjuhës së urrejtjes. Qëllimi i këtij komponenti është të modelojë informacionet sekuenciale dhe kontekstuale në tekst, të cilat nuk mund të kapen në mënyrë efektive nga qasja tradicionale e cila përdor reprezentimet si bag-of-words ose n-gram.
 
-Si output jep metrika vlerësimi për test set.
+Qasja nervore është implementuar duke përdorur PyTorch dhe përdor të njëjtin dataset (HateXplain) në një me klasifikim tre-klasor (normal, ofendues, gjuhë urrejtjeje).
+
+**Përmbledhje e Modelit**
+
+Modeli përfundimtar është një klasifikues dykahor LSTM i bazuar në mekanizmin e vëmendjes (attention-based bi-directional LSTM), me një shtresë të "embedding" me fjalë të trajnuara paraprakisht. 
+
+
+Komponentet bazë:
+
+- Tokenizimi dhe konstruktimi i fjalorit
+
+- Pretrained GloVe word embeddings
+
+- Enkoderi Bidirectional LSTM 
+
+- Mekanizmi i "vëmendjes" për interpretim
+
+**Përpunimi i të dhënave dhe Tokenizimi**
+
+Përpunimi i tekstit për modelin nervor është qëllimisht minimal për të ruajtur sinjalet semantike:
+
+- Shndërrimi i të gjitha shkronjave në të vogla
+
+- Normalizimi i URL-ve (<URL>)
+
+- Normalizimi i përmendjeve të përdoruesve (<USER>)
+
+```python
+def clean_text(text: str) -> str:
+    text = text.lower()
+    text = URL_PATTERN.sub("<URL>", text)
+    text = USER_PATTERN.sub("<USER>", text)
+    return text.strip()
+```
+
+Tokenizimi kryhet duke përdorur një tokenizues të personalizuar që:
+
+- Ndërton një fjalor nga të dhënat e trajnimit
+
+- Zbaton një prag minimal të frekuencës
+
+- Përdor tokenët <PAD> dhe <UNK>
+
+- Konverton tekstin në sekuenca me gjatësi fikse përmes mbushjes (padding) ose shkurtimit (truncation)
+
+Çdo hyrje (input) reprezentohet si një sekuencë e indekseve të fjalëve me një gjatësi maksimale prej 50 tokenësh.
+
+**Shtresa 'Embedding'**
+Fillimisht modeli ka përdorur embeddings të inicializuara në mënyrë të rastësishme, të mësuara nga dataseti i përzgjedhur. Kjo qasje ishte më e thjeshtë mirëpo më e ngadaltë dhe jepte performancë jo shumë të mirë. Përafërsisht: __Test Macro-F1 ≈ 0.50__.
+
+Më pas, vendoset që modeli përdor embedding të trajnuara paraprakisht nga GloVe (200 dimensione) për të inicializuar shtresën e embedding-eve.
+
+Ky ndryshim dha prodhoi një rritje në performancën e modelit në: __Test Macro-F1 ≈ 0.50-0.60__.
+
+Arsyeja:
+
+- Dataseti HateXplain nuk është mjaftueshëm i madh për të mësuar në mënyrë të besueshme reprezentimet semantike të fjalëve nga fillimi
+
+- Shumë sinjale apo shenja që mund të tregojne urrejtjen zakonisht mbështeten në njohuri gjuhësore të përgjithshme (p.sh., ofendime, identifikues të grupeve të caktuara etnike/religjioze/etj.)
+
+- Embedding-et e trajnuara paraprakisht përmirësojnë konvergencën dhe gjeneralizimin
+
+Matrica e embedding-eve është e sinkronizuar me fjalorin e tokenizuesit, dhe embedding-et mund të “ngurtësohen” (përmes parametrave) gjatë trajnimit për stabilitet.
+
+**Enkoderi LSTM**
+
+Enkoderi kryesor është një LSTM dykahor, i cili përpunon tekstin në të dy kahjet, përpara dhe mbrapa. Kjo i mundeson modelit të kapë:
+
+```python
+self.lstm = nn.LSTM(
+    input_size=embed_dim,
+    hidden_size=hidden_dim,
+    bidirectional=True,
+    batch_first=True
+)
+```
+
+- Renditjen e fjalëve
+
+- Varësitë afatgjate
+
+- Kuptimin kontekstual brenda një fjalie
+
+Konfigurimi:
+
+- Hidden size: 128
+
+- Numri i shtresave: 1
+
+- Bidirectional: Po
+
+- Formati i hyrjes/inputit: batch-first
+
+Konfigurimi dykahor prodhon reprezentime të kontekstualizuara për çdo token në sekuencë.
+
+**Mekanizmi i vemendjes**
+Për të përmirësuar interpretueshmërinë dhe për të u fokusuar në sinjalet relevante, aplikohet një shtresë e 'vëmendjes' mbi output-et e LSTM-së.
+
+```python
+scores = self.attn(lstm_out).squeeze(-1)
+weights = torch.softmax(scores, dim=1)
+context = torch.sum(lstm_out * weights.unsqueeze(-1), dim=1)
+
+```
+
+Mekanizmi i vëmendjes:
+
+- Llogarit një vlerë/rezultat të rëndësisë (skalar) për çdo token
+
+- Normalizon vlerat duke përdorur softmax
+
+- Prodhon një reprezentim të peshuar të fjalive
+
+Kjo i mundtëson modelit t'i dallojtë fjalët që janë më informuese për klasifikim, si fyerjet, ofendimet, ose referencat drejtuar grupeve të caktuara.
+
+Kjo shtresë përmirëson modelin duke mundësuar të fokusohet në token-ët që shfaqin diskriminim dhe e redukton varësinë ndaj vetëm gjatësisë së sekuencës. Gjithashtu, mundëson interpretimin e rezultatit të parashikimit.
+
+**Shtresa e Klasifikimit**
+
+Reprezentimi i fjalive kalon neper:
+
+- Dropout regularization
+
+- Aktivizimit Softmax për parashikimin e 3 klasave
+
+```python
+self.dropout = nn.Dropout(0.3)
+self.fc = nn.Linear(lstm_output_dim, num_classes)
+```
+
+Output-i përfundimtar korrespondon me klasat:
+
+- 0 → normal
+
+- 1 → ofendues
+
+- 2 → gjuhë urrejtjeje
+
+
+**Konfigurimi i Trajnimit**
+
+Modeli trajnohet duke përdorur konfigurimin e mëposhtëm:
+
+- Optimizer: Adam
+
+- Funksioni i humbjes: CrossEntropyLoss
+
+- Madhësia e batch-it: 32
+
+- Shkalla e të mësuarit: 1e-3
+
+- Epokat: deri në 8
+
+Trajnimi përdor një ndarje të stratifikuar në setet e trajnimit, validimit dhe testimit për të ruajtur shpërndarjen e etiketave.
+
+Modeli më i mirë zgjedhet dhe ruhet ne bazë të metrikës __Validation F1 Score__. 
+
+**Rezultatet Eksperimentale dhe Përmirësimet**
+
+**Modeli Neural Bazë**
+
+- Pa embedding-e të trajnuara paraprakisht
+
+- Pa mekanizëm vëmendjeje
+
+- Test Macro-F1 ≈ 0.50
+
+**Pas Shtimit të Embedding-eve GloVe**
+
+Log-et e trajnimit treguan:
+
+- Konvergjencë më e shpejtë
+
+- Lakore te validimit më te qëndrueshme
+
+Shembull:
+
+```nginx
+Epoka 4 | Train Acc 0.65 | Val Macro-F1 0.59
+
+Epoka 5 | Train Acc 0.67 | Val Macro-F1 0.60
+```
+
+
+**Pas Shtimit të Mekanizmit të Vëmendjes**
+
+Modeli arriti rezultatet më të mira:
+
+Validation Macro-F1 ≈ __0.61__
+
+Test Macro-F1 ≈ __0.60__
+
+Test Accuracy ≈ __0.61__
+
+Trajnimi përtej epokës 6–7 çoi në overfitting.
+
+**Zgjedhja e Modelit Përfundimtar**
+
+Modeli neural përfundimtar është një LSTM dypalësh me vëmendje dhe embedding-e GloVe të trajnuara paraprakisht, i zgjedhur sepse:
+
+- Performon me mire se pipeline-i tradicional NLP
+
+- Përmirëson modelin fillestar neural
+
+- Ofron interpretueshmëri përmes mekanizmit të vëmendjes
+
+**Kufizimet dhe te gjeturat**
+
+- Ka konfuzion midis klasave ofenduese dhe gjuhë urrejtjeje
+
+
+- Modele më të mëdha rrezikojnë overfitting në këtë dataset
+
+Këto të gjetura motivojnë eksplorimin e ardhshëm të modeleve bazuar në transformer.
 
 
 ## Pipeline Neurale NLP
