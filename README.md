@@ -117,7 +117,7 @@ scikit-learn	- TF-IDF vectorization, Logistic Regression, SVM, metrikat e vlerë
 
 nltk -	stopwords, pastrimi i tekstit
 
-tensorflow/keras	- model neural LSTM, embedding, training
+ torch – implementimi i modeleve neurale (CNN, LSTM), embedding dhe training
 
 matplotlib / seaborn -	vizualizime (nëse përdoren)
 
