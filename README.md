@@ -22,3 +22,10 @@
 - Fisnik Mustafa
   
 - Rukije Morina
+
+- Përshkruaj detajet e datasetit tuaj, numrin e atributeve, objekteve, madhësinë e datasetit,
+burimi nga është marrë, etj (nëse keni një dataset duke përdorur në zhvillimin e projektit tuaj).
+▪ Përgjatë projektit dhe punës së bërë duhet të keni të paraqitura të gjitha detajet që i keni
+aplikuar, rezultatet që keni fituar, jo vetëm të vendosen copy-paste por të përcjellën me
+sqarime e diskutime të detajuara. Kjo duke argumentuar dhe arsyetuar pse keni vendos të
+aplikoni/ përdorni atë formë të teknikave dhe rezultatet që keni fituar duke i diskutuar;
