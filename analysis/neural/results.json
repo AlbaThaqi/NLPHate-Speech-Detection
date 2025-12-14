@@ -1,0 +1,133 @@
+{
+  "lstm": {
+    "history": [
+      {
+        "accuracy": 0.6950372208436725,
+        "f1_macro": 0.6774513284202794,
+        "confusion_matrix": [
+          [
+            930,
+            701
+          ],
+          [
+            528,
+            1871
+          ]
+        ],
+        "epoch": 1
+      },
+      {
+        "accuracy": 0.7136476426799008,
+        "f1_macro": 0.6926222790453711,
+        "confusion_matrix": [
+          [
+            911,
+            720
+          ],
+          [
+            434,
+            1965
+          ]
+        ],
+        "epoch": 2
+      },
+      {
+        "accuracy": 0.7272952853598015,
+        "f1_macro": 0.7162530931921743,
+        "confusion_matrix": [
+          [
+            1068,
+            563
+          ],
+          [
+            536,
+            1863
+          ]
+        ],
+        "epoch": 3
+      }
+    ],
+    "final": {
+      "accuracy": 0.7272952853598015,
+      "f1_macro": 0.7162530931921743,
+      "confusion_matrix": [
+        [
+          1068,
+          563
+        ],
+        [
+          536,
+          1863
+        ]
+      ],
+      "epoch": 3
+    }
+  },
+  "cnn": {
+    "history": [
+      {
+        "accuracy": 0.6630272952853598,
+        "f1_macro": 0.6629794841869334,
+        "confusion_matrix": [
+          [
+            1312,
+            319
+          ],
+          [
+            1039,
+            1360
+          ]
+        ],
+        "epoch": 1
+      },
+      {
+        "accuracy": 0.6957816377171215,
+        "f1_macro": 0.6908696303960074,
+        "confusion_matrix": [
+          [
+            1148,
+            483
+          ],
+          [
+            743,
+            1656
+          ]
+        ],
+        "epoch": 2
+      },
+      {
+        "accuracy": 0.6962779156327543,
+        "f1_macro": 0.687644376899696,
+        "confusion_matrix": [
+          [
+            1068,
+            563
+          ],
+          [
+            661,
+            1738
+          ]
+        ],
+        "epoch": 3
+      }
+    ],
+    "final": {
+      "accuracy": 0.6962779156327543,
+      "f1_macro": 0.687644376899696,
+      "confusion_matrix": [
+        [
+          1068,
+          563
+        ],
+        [
+          661,
+          1738
+        ]
+      ],
+      "epoch": 3
+    }
+  },
+  "transformer": {
+    "error": "CUDA out of memory. Tried to allocate 4.24 GiB. GPU 0 has a total capacity of 14.74 GiB of which 1.62 GiB is free. Process 68752 has 13.12 GiB memory in use. Of the allocated memory 8.58 GiB is allocated by PyTorch, and 4.41 GiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)"
+  }
+}

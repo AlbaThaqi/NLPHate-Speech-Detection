@@ -1,8 +1,24 @@
+numpy
 pandas
 scikit-learn
-numpy
+matplotlib
 joblib
 jupyter
-transformers
+
+# NLP
+nltk
+lime
+# removed spaCy dependency; using NLTK lemmatizer instead
+lime
+
+# Deep learning
 torch
+torchvision
+torchaudio
+
+# Transformers
+transformers
+accelerate
+
+# Utilities
 PyYAML
